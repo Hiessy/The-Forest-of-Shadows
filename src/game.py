@@ -1,7 +1,7 @@
 import random
 
-from src.npc import NPC
-from src.player import Player
+from npc import NPC
+from player import Player
 
 
 def fight(player, enemy):

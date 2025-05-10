@@ -1,4 +1,4 @@
-from src.character import Character
+from character import Character
 
 class NPC(Character):
     def __init__(self, name, health=5, attack=1, defense=0, experience=0):
