@@ -1,14 +1,18 @@
-# Refactored game_rpg.py as game_engine.py
+# Refactored game_rpg.py as game_engine.py with rendering
 
 from player import Player
 from npc import NPC
 import random
+from renderer import Renderer
+import pygame
 
 class GameEngine:
     def __init__(self, player_name):
         self.player = Player(player_name)
         self.npcs = []  # List of NPCs in the world
         self.current_enemy = None
+        self.renderer = Renderer()
+        self.player_pos = (2, 2)  # Starting in center of 5x5 grid
 
     def spawn_enemy(self):
         # Create a new enemy and add it to the list
@@ -29,7 +33,7 @@ class GameEngine:
 
     def engage_combat(self):
         if not self.current_enemy:
-            return "There is no enemy to fight."
+            return ["There is no enemy to fight."]
 
         combat_log = []
         while self.player.is_alive() and self.current_enemy.is_alive():
@@ -40,13 +44,18 @@ class GameEngine:
                 dmg_to_player = self.current_enemy.attack_target(self.player)
                 combat_log.append(f"{self.current_enemy.name} dealt {dmg_to_player} damage to you.")
 
+            self.renderer.update(self.player_pos, combat_log)
+            pygame.time.wait(500)
+
         if self.player.is_alive():
-            combat_log.append(f"You defeated {self.current_enemy.name}!")
-            self.player.gain_exp(self.current_enemy.experience)
+            combat_log.append(f"You defeated {self.current_enemy.name} and gained {self.current_enemy.experience} XP!")
+            self.player.exp += self.current_enemy.experience
         else:
             combat_log.append("You have been defeated...")
 
         self.current_enemy = None  # Reset enemy after combat
+        self.renderer.update(self.player_pos, combat_log)
+        pygame.time.wait(1000)
         return combat_log
 
     def get_player_stats(self):
@@ -66,8 +75,10 @@ class GameEngine:
             "health": self.current_enemy.health,
             "attack": self.current_enemy.attack,
             "defense": self.current_enemy.defense,
-            "experience": self.current_enemy.experience
         }
 
     def is_player_alive(self):
         return self.player.is_alive()
+
+    def quit(self):
+        self.renderer.quit()
