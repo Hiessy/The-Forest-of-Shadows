@@ -12,7 +12,11 @@ class GameEngine:
 
     def spawn_enemy(self):
         # Create a new enemy and add it to the list
-        enemy = NPC("Goblin", health=10, attack=3, defense=1, experience=20)
+        enemy = random.choice([
+            NPC("Goblin", 15, 6, 4, experience=20),
+            NPC("Skeleton", 25, 7, 7, experience=30),
+            NPC("Wolf", 20, 6, 5, experience=25)
+        ])
         self.npcs.append(enemy)
         return enemy
 
